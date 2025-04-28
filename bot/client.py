@@ -15,7 +15,7 @@ class Bot(Client):
     var = Cache
     cmd = Commands
     url = URLSafe
-    mdb = Database
+    mdb = Database  # ini sudah benar, disimpan di atribut class
 
     def __init__(self):
         name: str = self.env.BOT_ID
@@ -23,13 +23,18 @@ class Bot(Client):
         api_hash: str = self.env.API_HASH
         bot_token: str = self.env.BOT_TOKEN
 
+        # Koneksi MongoDB disimpan manual, tidak dikirim ke super
+        self.mongodb = dict(
+            connection=self.mdb.Client,
+            remove_peers=True,
+        )
+
         super().__init__(
-            name, api_id, api_hash,
+            name,
+            api_id=api_id,
+            api_hash=api_hash,
             bot_token=bot_token,
-            mongodb=dict(
-                connection=self.mdb.Client,
-                remove_peers=True,
-            ),
+            plugins=dict(root="plugins")  # kalau kamu pakai plugins
         )
 
     async def start(self):
